@@ -1,11 +1,17 @@
+import json
 from django.shortcuts import render
 # Create your views here.
 from bs4 import BeautifulSoup
-from .models import FuelPrices
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
+from .models import FuelPrices
+from django.http import HttpResponse
 import requests
 
-def fetchPetrolPrices():
+@never_cache
+@csrf_exempt
+def updateCurrentFuelPrices(request):
     URL = 'https://www.bankbazaar.com/fuel/petrol-price-india.html'
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -14,7 +20,7 @@ def fetchPetrolPrices():
 
     data = []
     prices = dict()
-    table = soup.find('table', attrs={'class':'table table-curved tabdetails heightcontroltable'})
+    table = soup.find('table', attrs={'class': 'table table-curved tabdetails heightcontroltable'})
     table_body = table.find('tbody')
 
     rows = table_body.find_all('tr')
@@ -22,21 +28,24 @@ def fetchPetrolPrices():
         cols = row.find_all('td')
         cols = [ele.text.strip() for ele in cols]
         prices[cols[0]] = cols[1]
-        data.append([ele for ele in cols if ele]) # Get rid
-
-
-    print(prices)
-
-    return prices
-
-
-def updateCurrentFuelPrices():
+        data.append([ele for ele in cols if ele])  # Get rid
     #petrol
-    prices = fetchPetrolPrices()
     # import these petrol prices in FuelPrices table -> type petrol
     for key in prices.keys():
         cityname = key
         fuelprice = prices[key]
+        if fuelprice == 'Petrol ( / litre)':
+            continue
+        price = float(fuelprice[2:])
 
-        fp = FuelPrices(city=cityname, price=fuelprice, type='Petrol')
-        fp.save()
+        if FuelPrices.objects.filter(city=cityname, fuel_type=1).exists():
+            #update
+            FuelPrices.objects.filter(city=cityname,fuel_type=1).update(price=price)
+        else:
+            #create new record
+            fp = FuelPrices(city=cityname, price=price, fuel_type=1)
+            fp.save()
+
+    response = dict()
+    response['data'] = 'ok'
+    return HttpResponse(json.dumps(response), content_type='application/json')
