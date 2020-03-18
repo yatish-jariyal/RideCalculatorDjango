@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'if-44^e%)t*%hq@&rcvis=slz$v=p+__m2eyl-jfc-f$$)7+%2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'yatish13.pythonanywhere.com' , 'yatishjariyal.pythonanywhere.com']
 
@@ -76,11 +76,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'yatish13$mydb',
         'USER': 'yatish13',
         'PASSWORD': 'placybabe',
         'HOST': 'yatish13.mysql.pythonanywhere-services.com',
+
     }
 }
 
