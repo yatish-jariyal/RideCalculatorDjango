@@ -28,7 +28,7 @@ def updateCurrentFuelPrices(request):
 
     if FuelPrices.objects.filter(city=city, fuel_type = fuel_type).exists():
         #update
-        FuelPrices.objects.filter(city=city, fuel_type=1).update(price=price)
+        FuelPrices.objects.filter(city=city, fuel_type=fuel_type).update(price=price)
     else:
         fp = FuelPrices(city=city, price=price, fuel_type=1)
         fp.save()
