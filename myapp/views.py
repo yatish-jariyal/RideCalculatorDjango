@@ -32,7 +32,7 @@ def updateCurrentFuelPrices(request):
     else:
         fp = FuelPrices(city=city, price=price, fuel_type=1)
         fp.save()
-    
+
     response = dict()
     response['data'] = 'ok'
     return HttpResponse(json.dumps(response), content_type='application/json')
@@ -44,6 +44,7 @@ def fetchFuelPrice(request):
     city = req['city']
     fuel_type = req['fuel_type']
 
+    print("fueltype = ",fuel_type)
     type = 1
     if fuel_type == "Diesel":
         type = 2
