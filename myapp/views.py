@@ -45,8 +45,9 @@ def fetchFuelPrice(request):
     fuel_type = req['fuel_type']
 
     print("fueltype = ",fuel_type)
-    type = 1
-    if fuel_type == "Diesel":
+    if fuel_type == 'Petrol':
+        type = 1
+    elif fuel_type == 'Diesel':
         type = 2
     elif fuel_type == "CNG":
         type = 3
