@@ -30,7 +30,7 @@ def updateCurrentFuelPrices(request):
         #update
         FuelPrices.objects.filter(city=city, fuel_type=fuel_type).update(price=price)
     else:
-        fp = FuelPrices(city=city, price=price, fuel_type=1)
+        fp = FuelPrices(city=city, price=price, fuel_type=fuel_type)
         fp.save()
 
     response = dict()
