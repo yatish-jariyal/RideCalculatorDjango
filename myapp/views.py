@@ -18,6 +18,7 @@ def updateCurrentFuelPrices(request):
     city = req["city"]
     price = float(req["price"])
     type = req["fuel_type"]
+    state = req["state"]
 
     if type == "Petrol":
         fuel_type = 1
@@ -30,7 +31,7 @@ def updateCurrentFuelPrices(request):
         #update
         FuelPrices.objects.filter(city=city, fuel_type=fuel_type).update(price=price)
     else:
-        fp = FuelPrices(city=city, price=price, fuel_type=fuel_type)
+        fp = FuelPrices(city=city, price=price, fuel_type=fuel_type, state = state)
         fp.save()
 
     response = dict()
