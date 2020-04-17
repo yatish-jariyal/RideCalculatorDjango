@@ -11,7 +11,7 @@ class FuelPrices(models.Model):
     )
 
     id = models.AutoField(primary_key=True)
-    state = models.AutoField(max_length=20)
+    state = models.CharField(max_length=20)
     city = models.CharField(max_length=20)
     fuel_type = models.IntegerField(choices=FUEL_TYPES)
     price = models.FloatField(default=0)
