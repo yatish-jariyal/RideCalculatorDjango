@@ -44,6 +44,7 @@ def fetchFuelPrice(request):
     req = request.POST
     city = req['city']
     fuel_type = req['fuel_type']
+    state = req['state']
 
     print("fueltype = ",fuel_type)
     if fuel_type == 'Petrol':
@@ -54,26 +55,64 @@ def fetchFuelPrice(request):
         type = 3
 
     query_set = FuelPrices.objects.filter(city=city, fuel_type=type)
-    json_data = serializers.serialize('json',query_set)
-    data = json.loads(json_data)
 
-    print('data = ',data)
-    data = data[0]
-    mydata = dict()
-    mydata['id'] = data['pk']
-    fields = data['fields']
-    mydata['city'] = fields['city']
-    mydata['price'] = fields['price']
-    fuel_type = fields['fuel_type']
-    if fuel_type == 1:
-        mydata['fuel_type'] = 'Petrol'
-    elif fuel_type == 2:
-        mydata['fuel_type'] = 'Diesel'
-    else:
-        mydata['fuel_type'] = 'CNG'
+    if not query_set:
 
-    return HttpResponse(json.dumps(mydata), content_type='application/json')
+        json_data = serializers.serialize('json',query_set)
+        data = json.loads(json_data)
 
+        print('data = ',data)
+        data = data[0]
+        mydata = dict()
+        mydata['response'] = 'cityFound'
+        mydata['id'] = data['pk']
+        fields = data['fields']
+        mydata['city'] = fields['city']
+        mydata['price'] = fields['price']
+        fuel_type = fields['fuel_type']
+        if fuel_type == 1:
+            mydata['fuel_type'] = 'Petrol'
+        elif fuel_type == 2:
+            mydata['fuel_type'] = 'Diesel'
+        else:
+            mydata['fuel_type'] = 'CNG'
+
+        return HttpResponse(json.dumps(mydata), content_type='application/json')
+
+    else: #if city name does not exists -> we'll get empty query set
+
+        mydata = dict()
+        mydata['response'] = 'cityNotFound'
+
+        query_set = FuelPrices.objects.filter(state= state, fuel_type=type)
+        json_data = serializers.serialize('json', query_set)
+        data = json.loads(json_data)
+
+        print('data = ', data)
+        ##change karun commit ch nahi kela ----------
+        data = data[0]
+        mylist = []
+
+        for d in data:
+            mydata = dict()
+            mydata['id'] = d['pk']
+            mydata['city'] = d['city']
+            mydata['state'] = d['state']
+            mydata['price'] = d['price']
+            if fuel_type == 1:
+                mydata['fuel_type'] = 'Petrol'
+            elif fuel_type == 2:
+                mydata['fuel_type'] = 'Diesel'
+            else:
+                mydata['fuel_type'] = 'CNG'
+
+            mylist.append(mydata)
+
+        mydata = dict()
+        mydata['response'] = 'cityNotFound'
+        mydata['cityList'] = mylist
+
+        return HttpResponse(json.dumps(mydata), content_type='application/json')
 
 
 
