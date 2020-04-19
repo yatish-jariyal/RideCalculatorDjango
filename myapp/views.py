@@ -93,9 +93,10 @@ def fetchFuelPrice(request):
         for d in data:
             mydata = dict()
             mydata['id'] = d['pk']
-            mydata['city'] = d['city']
-            mydata['state'] = d['state']
-            mydata['price'] = d['price']
+            fields = d['fields']
+            mydata['city'] = fields['city']
+            mydata['state'] = fields['state']
+            mydata['price'] = fields['price']
             if fuel_type == 1:
                 mydata['fuel_type'] = 'Petrol'
             elif fuel_type == 2:
