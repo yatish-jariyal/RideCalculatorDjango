@@ -56,10 +56,12 @@ def fetchFuelPrice(request):
 
     query_set = FuelPrices.objects.filter(city=city, fuel_type=type)
 
-    if not query_set:
 
-        json_data = serializers.serialize('json',query_set)
-        data = json.loads(json_data)
+
+    json_data = serializers.serialize('json',query_set)
+    data = json.loads(json_data)
+
+    if data != []:
 
         print('data = ',data)
         data = data[0]
