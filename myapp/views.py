@@ -81,16 +81,11 @@ def fetchFuelPrice(request):
 
     else: #if city name does not exists -> we'll get empty query set
 
-        mydata = dict()
-        mydata['response'] = 'cityNotFound'
-
         query_set = FuelPrices.objects.filter(state= state, fuel_type=type)
         json_data = serializers.serialize('json', query_set)
         data = json.loads(json_data)
 
         print('data = ', data)
-        ##change karun commit ch nahi kela ----------
-        data = data[0]
         mylist = []
 
         for d in data:
