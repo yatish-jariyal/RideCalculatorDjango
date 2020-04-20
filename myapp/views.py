@@ -56,8 +56,6 @@ def fetchFuelPrice(request):
 
     query_set = FuelPrices.objects.filter(city=city, fuel_type=type)
 
-
-
     json_data = serializers.serialize('json',query_set)
     data = json.loads(json_data)
 
@@ -87,31 +85,40 @@ def fetchFuelPrice(request):
         json_data = serializers.serialize('json', query_set)
         data = json.loads(json_data)
 
-        print('data = ', data)
-        mylist = []
+        if data != []:
 
-        for d in data:
+            print('data = ', data)
+            mylist = []
+
+            for d in data:
+                mydata = dict()
+                mydata['id'] = d['pk']
+                fields = d['fields']
+                mydata['city'] = fields['city']
+                mydata['state'] = fields['state']
+                mydata['price'] = fields['price']
+                if fuel_type == 1:
+                    mydata['fuel_type'] = 'Petrol'
+                elif fuel_type == 2:
+                    mydata['fuel_type'] = 'Diesel'
+                else:
+                    mydata['fuel_type'] = 'CNG'
+
+                mylist.append(mydata)
+
             mydata = dict()
-            mydata['id'] = d['pk']
-            fields = d['fields']
-            mydata['city'] = fields['city']
-            mydata['state'] = fields['state']
-            mydata['price'] = fields['price']
-            if fuel_type == 1:
-                mydata['fuel_type'] = 'Petrol'
-            elif fuel_type == 2:
-                mydata['fuel_type'] = 'Diesel'
-            else:
-                mydata['fuel_type'] = 'CNG'
+            mydata['response'] = 'cityNotFound'
+            mydata['cityList'] = mylist
 
-            mylist.append(mydata)
+            return HttpResponse(json.dumps(mydata), content_type='application/json')
 
-        mydata = dict()
-        mydata['response'] = 'cityNotFound'
-        mydata['cityList'] = mylist
+        else: #if state name not found -> in case of CNG
+            mydata = dict()
+            mydata['response'] = 'StateNotFound'
 
-        return HttpResponse(json.dumps(mydata), content_type='application/json')
+            return HttpResponse(json.dumps(mydata), content_type ='application/json')
 
+        
 
 
 
